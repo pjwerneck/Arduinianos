@@ -5,7 +5,6 @@
 // endereço do HMC6352 já ajustado para 7 bits
 #define ADDRESS 0x42 >> 1
 
-byte data[2];
 int heading;
 
 
@@ -32,16 +31,12 @@ void loop()
 
   // solicita 2 bytes
   Wire.requestFrom(ADDRESS, 2);
-  int i = 0;
-  while (i < 2){
-    // espera até receber os 2 bytes
-    if (Wire.available()){
-      data[i] = Wire.receive();
-      i++;
-    }
-  }
-  // ajusta o byte mais significante e soma
-  heading = (data[0] << 8) + data[1];
+  if (2 <= Wire.available()){
+    // ajusta o byte mais significante e soma
+    heading = Wire.receive();
+    heading = heading << 8;
+    heading += Wire.receive();
+  }   
   
   // exibe o resultado final em graus
   Serial.println(heading/10.0);
